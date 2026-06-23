@@ -52,22 +52,21 @@ Du musst keinen Code mehr bauen. Du brauchst nur Docker und eine `docker-compose
     Erstelle darin eine `docker-compose.yml` mit folgendem Inhalt:
 
     ```yaml
-    services:
-      loxhuebridge:
-      image: ghcr.io/bausi2k/loxone-hue-bridge:latest
-    
-      container_name: loxhuebridge
-      restart: always
-    
-      # WICHTIG für Loxone UDP Kommunikation
-      network_mode: "host"
-    
-      environment:
-        - TZ=Europe/Vienna
+	services:
+	  loxhuebridge:
+	    image: ghcr.io/bausi2k/loxone-hue-bridge:latest
+	    container_name: loxhuebridge
+	    restart: always
+
+	    # WICHTIG für Loxone UDP Kommunikation
+	    network_mode: "host"
+
+	    environment:
+	      - TZ=Europe/Vienna
       
-      volumes:
-        # Nur noch der Data-Ordner ist wichtig
-        - ./data:/app/data
+	    volumes:
+	      # Nur noch der Data-Ordner ist wichtig
+	      - ./data:/app/data
       
     ```
 
