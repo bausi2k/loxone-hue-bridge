@@ -52,6 +52,7 @@ Du musst keinen Code mehr bauen. Du brauchst nur Docker und eine `docker-compose
     Erstelle darin eine `docker-compose.yml` mit folgendem Inhalt:
 
     ```yaml
+    
 services:
   loxhuebridge:
     # WICHTIG: Hier steht jetzt der neue, offizielle Image-Name
@@ -69,6 +70,7 @@ services:
     volumes:
       # Nur noch der Data-Ordner ist wichtig
       - ./data:/app/data
+      
     ```
 
 3.  **Starten:**
