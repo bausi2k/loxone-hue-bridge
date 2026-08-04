@@ -6,7 +6,7 @@
 
 Sie ermöglicht eine extrem schnelle, lokale Steuerung ohne Cloud-Verzögerung und nutzt die moderne Hue Event-Schnittstelle (SSE), um Statusänderungen in Echtzeit an Loxone (UDP) und MQTT Broker zurückzumelden.
 
-## 🚀 Features V2.3.0
+## 🚀 Features V2.4.2
 
 * **Nativer „Alles" Befehl:** Nutzt die Hue `bridge_home` API für blitzschnelles Ausschalten des gesamten Hauses.
 * **Hue Effekte & Alert:** Steuere Lampen mit atmosphärischen Effekten direkt aus Loxone:
@@ -19,8 +19,8 @@ Sie ermöglicht eine extrem schnelle, lokale Steuerung ohne Cloud-Verzögerung u
 * **Live Dashboard:** Echtzeit-Anzeige aller Lichter (mit Live-Werten für Kelvin/Hex/Dim), Sensoren und Batterieständen (inkl. Warnsystem bei ≤ 10 %).
 * **Smart Mapping:** Einfache Zuordnung per „Klick & Wähl" mit automatischer Duplikatsfilterung bei erkannten Befehlen.
 * **Erweiterter Diagnose-Tab:** Zeigt Gerätestatus, Zigbee-Konnektivität pro Gerät und eine vollständige Übersicht aller Lampen-Fähigkeiten (Dimmen, Farbe, Weißton, unterstützte Effekte).
-* **Automatisierte Tests:** Maximale Zuverlässigkeit durch eine Test-Infrastruktur mit 16 Tests und > 85 % Code-Coverage.
-* **Persistent Logging (SQLite):** Dank nativer SQLite-Datenbank bleiben Logs auch nach Neustarts erhalten und sind extrem performant durchsuchbar (Volltextsuche & Filter).
+* **Automatisierte Tests:** Test-Infrastruktur auf Basis des nativen Node.js Test-Runners mit 34 Tests.
+* **Persistent Logging (SQLite):** Dank nativer SQLite-Datenbank bleiben Logs auch nach Neustarts erhalten und sind extrem performant durchsuchbar (Volltextsuche & Filter). Automatische Rotation bei 50.000 Einträgen hält die Datenbank klein.
 * **Backup & Restore:** Lade deine komplette Konfiguration inkl. Mappings als Backup herunter und stelle sie bei Bedarf wieder her.
 * **Loxone Integration:**
     * **Steuern:** Schalten, Dimmen, Warmweiß & RGB (via Virtueller Ausgang).
@@ -52,22 +52,16 @@ Du musst keinen Code mehr bauen. Du brauchst nur Docker und eine `docker-compose
     Erstelle darin eine `docker-compose.yml` mit folgendem Inhalt:
 
     ```yaml
-	services:
-	  loxhuebridge:
-	    image: ghcr.io/bausi2k/loxone-hue-bridge:latest
-	    container_name: loxhuebridge
-	    restart: always
-
-	    # WICHTIG für Loxone UDP Kommunikation
-	    network_mode: "host"
-
-	    environment:
-	      - TZ=Europe/Vienna
-      
-	    volumes:
-	      # Nur noch der Data-Ordner ist wichtig
-	      - ./data:/app/data
-      
+    services:
+      loxhuebridge:
+        image: ghcr.io/bausi2k/loxhuebridge:latest
+        container_name: loxhuebridge
+        restart: always
+        network_mode: "host"
+        environment:
+          - TZ=Europe/Vienna
+        volumes:
+          - ./data:/app/data
     ```
 
 3.  **Starten:**
@@ -192,3 +186,6 @@ This project was created with the assistance of AI.
 Code architecture, logic, and documentation support provided by Gemini.
 
 ---
+
+<a href="https://www.buymeacoffee.com/bausi2k" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 60px !important;width: 217px !important;" ></a>
+
