@@ -6,6 +6,25 @@ Das Format basiert auf [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 und dieses Projekt hält sich an [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 [![Buy Me A Coffee](https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png)](https://www.buymeacoffee.com/bausi2k)
 
+## [2.4.3] - 2026-08-06
+**Dauerbetrieb & Einstellungen** – Behebt einen Fehler, der die Bridge bis zum Neustart komplett lahmlegen konnte, dazu drei Stellen, an denen ein einmaliger Fehler zu einem dauerhaften Ausfall führte, und vier Fehler beim Speichern der Einstellungen.
+
+### 🐞 Bugfixes
+- **Queue-Blockade bei hängender Bridge (kritisch):** Keiner der Befehls-Requests hatte ein Timeout gesetzt – der Standardwert von axios ist „unbegrenzt". Antwortete die Hue Bridge nicht mehr (Verbindung steht, aber keine Antwort), blieb die Warteschlange dauerhaft stehen und die Bridge nahm zwar weiter Loxone-Befehle an, leitete aber nichts mehr weiter. Nur ein Neustart half. Mit einer Test-Bridge nachgewiesen: nach der Wiederherstellung kamen vorher **0 von 5** Befehlen an, jetzt erholt sich die Verbindung selbstständig. Zusätzlich abgesichert durch eine Zeitgrenze in der Warteschlange, eine Obergrenze für gepufferte Befehle und das Verfallen verwaister Gerätesperren.
+- **MQTT-Passwort wurde bei jedem Speichern gelöscht:** Da das Passwort aus Sicherheitsgründen nicht an das Dashboard ausgeliefert wird, blieb das Eingabefeld leer und überschrieb beim Speichern den hinterlegten Wert. Jeder Klick auf „Speichern" im System-Tab hat damit die MQTT-Anmeldung zerstört. Ein leeres Feld bedeutet jetzt „unverändert lassen", und das Dashboard zeigt an, ob ein Passwort hinterlegt ist.
+- **Drosselung wirkte nach einem Neustart nicht:** Der eingestellte Wert wurde nur zur Laufzeit übernommen; nach jedem Neustart galten wieder die Standardwerte. Außerdem sank das Intervall für Gruppenbefehle beim ersten Speichern von 1100 ms auf 100 ms und provozierte genau die Überlastung (HTTP 429), die die Drosselung verhindern soll. Untergrenze für Gruppen ist jetzt 1000 ms.
+- **MQTT gab nach einem Anmeldefehler endgültig auf:** Ein vorübergehend nicht erreichbarer oder neu startender Broker legte MQTT bis zum Neustart still. Jetzt wird mit wachsendem Abstand erneut versucht (ab 30 s, maximal 15 Minuten).
+- **UDP-Verbindung zu Loxone wurde nach einem Fehler nie wiederhergestellt:** Schloss das Betriebssystem den Socket, schlugen alle weiteren Statusmeldungen still fehl – Loxone bekam dauerhaft keine Werte mehr, ohne dass es auffiel. Der Socket wird jetzt neu aufgebaut.
+- **Falscher Aus-Status an Loxone:** Ein Befehl ohne Schaltanteil meldete fälschlich „Licht aus". Bislang latent, wäre mit den geplanten relativen Dimmbefehlen real geworden.
+- **Farbton bei gesättigten Farben:** Blau wurde als `#38b1ff`, Magenta als `#ff51ff` an Loxone und MQTT gemeldet. Ursache war ein Abschneiden statt eines gemeinsamen Herunterskalierens der Farbkanäle.
+- **Debug-Modus wirkte erst nach einem Neustart**, wenn er über den Einrichtungsassistenten gesetzt wurde.
+- **Leere Zahlenfelder** in den Einstellungen landeten als `null` in der Konfiguration und machten UDP-Versand bzw. Drosselung unbrauchbar, ohne dass die Einrichtung als unvollständig galt.
+- **Unbekannte API-Pfade** lieferten HTTP 200 und tauchten als vermeintlich neuer Loxone-Befehl im Dashboard auf; jetzt HTTP 404.
+- **Absturzursachen werden vollständig protokolliert:** Unbehandelte Promise-Fehler beendeten den Prozess bisher, ohne den Grund zu hinterlassen – nach dem automatischen Neustart war die Ursache verloren.
+
+### 🧪 Tests
+- Abdeckung von 34 auf 60 Tests erweitert. Neu abgedeckt: Verhalten der Warteschlange bei hängender Bridge, Selbstheilung von MQTT und UDP, Farbumrechnung gesättigter Farben und das Speichern der Einstellungen. Eine Quelltext-Prüfung verhindert, dass künftig wieder Anfragen ohne Timeout entstehen.
+
 ## [2.4.2] - 2026-08-04
 **Stabilität & Datenhygiene** – Behebt vier Fehler, die im laufenden Betrieb auftreten: fehlerhafte Farbwerte Richtung Loxone, ein funktionsloser Löschen-Button, eine unbegrenzt wachsende Logdatenbank und versehentlich versionierte Laufzeitdaten.
 
