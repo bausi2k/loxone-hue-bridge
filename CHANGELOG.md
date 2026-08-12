@@ -6,6 +6,25 @@ Das Format basiert auf [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 und dieses Projekt hält sich an [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 [![Buy Me A Coffee](https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png)](https://www.buymeacoffee.com/bausi2k)
 
+## [2.5.0] - 2026-08-12
+**Ereignisverarbeitung & Farbtreue** – Ausgelöst durch die Auswertung von 5000 Logzeilen aus 18 Stunden Dauerbetrieb. Sie brachte zwei Fehler ans Licht, die im Alltag ständig auftraten: der Watchdog startete die Ereignisverbindung 48-mal ohne Grund neu, und dabei gingen vereinzelt Zustandsmeldungen verloren. Dazu ein sauberes Herunterfahren, korrigierte Farbumrechnung und eine abgesicherte Auslieferung.
+
+### 🐞 Bugfixes
+- **Watchdog startete die Ereignisverbindung ständig ohne Grund neu:** Die Schwelle lag bei 60 Sekunden ohne Daten. Ein Mitschnitt am Eventstream zeigt, dass die Bridge nur beim Verbindungsaufbau ein Lebenszeichen sendet und danach ausschließlich echte Ereignisse – in ruhigen Phasen ist Stille also völlig normal. Die Folge waren **48 Neustarts in 18 Stunden**, nachts im Takt von 5 Minuten, jeder mit einer vollständigen Neuabfrage aller Geräte. Während des Neuaufbaus war die Bridge jeweils kurz taub. Die Schwelle liegt jetzt bei 5 Minuten.
+- **Verlorene Zustandsmeldungen bei großen Ereignissen (Datenverlust):** Ereignisse, die größer als ein Netzwerkpaket sind, treffen in mehreren Stücken ein. Sie wurden bisher stückweise ausgewertet – die erste Hälfte scheiterte als ungültiges JSON, die zweite verschwand kommentarlos. Zweimal in 18 Stunden ist damit ein Zustandswechsel nie bei Loxone angekommen. Die Daten werden jetzt über Paketgrenzen hinweg zusammengesetzt.
+- **Ein fehlender Endpunkt riss die gesamte Geräteabfrage ab:** Beim Start werden sieben Ressourcen parallel geladen. Fehlte eine einzige – ältere Firmware, kein Kontaktsensor – ging der komplette Abgleich verloren und der Statusspeicher blieb bis zum ersten Ereignis leer. Im Dashboard blieb aus demselben Grund die Geräteliste leer. Ausfälle werden jetzt einzeln behandelt und protokolliert.
+- **Doppelte Ereignisverbindung nach einem Neustart:** Die abgebrochene Verbindung konnte ihrerseits noch einen Neuaufbau anstoßen, während der neue bereits lief – mit doppelten UDP-Paketen an Loxone und doppelten MQTT-Meldungen als Folge. Jede Verbindung kennt jetzt ihre Generation und überholte Verbindungen werden ignoriert.
+- **Kein sauberes Herunterfahren:** Es gab keine Behandlung von `SIGTERM`. Jedes `docker stop` beendete den Prozess mitten im Schreibvorgang und ließ die Logdatenbank in einem Zustand zurück, den SQLite beim nächsten Start erst wiederherstellen musste. Server, Ereignisverbindung, MQTT, UDP und Datenbank werden jetzt in fester Reihenfolge geschlossen.
+- **Datenordner hing am Arbeitsverzeichnis:** Ein Start aus einem anderen Verzeichnis legte dort einen leeren `data/`-Ordner an – Bridge-IP, App-Key und sämtliche Zuordnungen wirkten verloren. Der Ordner liegt jetzt fest beim Projekt und lässt sich über `DATA_DIR` bewusst umlenken.
+- **Farbumrechnung war in sich widersprüchlich:** Hin- und Rückrichtung nutzten Matrizen aus unterschiedlichen Quellen, die nicht zueinander passten. Schwerer wog, dass neutrales Weiß nicht auf dem Weißpunkt D65 landete – **Weiß aus Loxone kam grünstichig an der Lampe an**. Beide Matrizen sind jetzt aus den Primärfarben der Hue-Farblampen (Gamut C) neu berechnet und exakt zueinander invers. Die Sättigung bleibt erhalten, der Grünstich verschwindet.
+
+### 🔧 Auslieferung
+- **Die Testsuite läuft jetzt vor jedem Release-Build.** Bisher wurde das Image gebaut und als `latest` veröffentlicht, ohne dass je ein Test gelaufen war.
+- **Der Release-Workflow lässt sich von Hand starten.** Bei v2.4.3 erzeugte der Tag-Push keinen Lauf, und ohne manuellen Start blieb nur, den Tag zu löschen und neu zu pushen.
+
+### 🧪 Tests
+- Abdeckung von 60 auf 113 Tests erweitert. Neu abgedeckt: Zusammensetzen der Ereignisdaten über Paketgrenzen, Ausfall einzelner Ressourcen, Generationswechsel der Ereignisverbindung, Herunterfahren samt Reihenfolge und Zeitgrenze, Farbmatrizen mit Weißpunkt- und Rundlaufprüfung sowie die Release-Konfiguration selbst.
+
 ## [2.4.3] - 2026-08-06
 **Dauerbetrieb & Einstellungen** – Behebt einen Fehler, der die Bridge bis zum Neustart komplett lahmlegen konnte, dazu drei Stellen, an denen ein einmaliger Fehler zu einem dauerhaften Ausfall führte, und vier Fehler beim Speichern der Einstellungen.
 
