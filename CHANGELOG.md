@@ -6,6 +6,20 @@ Das Format basiert auf [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 und dieses Projekt hält sich an [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 [![Buy Me A Coffee](https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png)](https://www.buymeacoffee.com/bausi2k)
 
+## [2.6.0] - 2026-08-13
+**Unzuverlässige Leuchten erkennen und ausgleichen** – Manche Leuchten führen Befehle nicht zuverlässig aus: sie schalten nicht ab, oder sie gehen an und bleiben dabei auf ihrer alten, oft sehr niedrigen Helligkeit stehen. Betroffen sind typischerweise Geräte anderer Hersteller. Diese Version macht das Problem im Dashboard sichtbar und bietet eine Gegenmaßnahme.
+
+### ✨ Neu
+- **Zuverlässigkeit der Befehle im Diagnose-Tab:** Für jede Leuchte wird gezählt, wie viele Befehle gesendet, wie viele bestätigt und wie viele später von der Bridge widerrufen wurden – samt Quote und dem letzten Vorfall im Klartext, etwa `on=false → on=true nach 70 s`. Die Bridge selbst liefert keinerlei Angaben zur Funkqualität, weder Signalstärke noch Verbindungsgüte; diese Messung ersetzt das.
+- **Option „Befehl wiederholen" je Gerät:** Sendet jeden Befehl kurz darauf ein zweites Mal. Für Leuchten gedacht, die einzelne Funkbefehle verschlucken. Bewusst pro Gerät einschaltbar und nicht als Standardverhalten – eine Wiederholung kann sonst gegen einen Wandschalter oder die Hue-App arbeiten, wenn die parallel bedient werden. Sie senkt die Fehlerrate deutlich, beseitigt die Ursache aber nicht.
+- **Helligkeitsänderungen werden protokolliert.** Bisher landeten sie nur im internen Status; im Log tauchten sie nie auf. Dadurch war „die Leuchte geht an, bleibt aber dunkel" im Nachhinein nicht nachvollziehbar.
+
+### 🐞 Bugfixes
+- **Waagrechtes Scrollen auf dem Handy:** Die neue Tabelle im Diagnose-Tab bekam einen eigenen Scrollbereich. Ohne den hätte sich die gesamte Seite verschoben.
+
+### 🧪 Tests
+- Abdeckung von 113 auf 135 Tests erweitert. Neu abgedeckt: Zuordnung von Ereignissen zu gesendeten Befehlen samt Zeitfenster und Rundungstoleranz, die Wiederholungslogik einschließlich Abbruch bei einem neueren Befehl, und die Diagnose-Route.
+
 ## [2.5.0] - 2026-08-12
 **Ereignisverarbeitung & Farbtreue** – Ausgelöst durch die Auswertung von 5000 Logzeilen aus 18 Stunden Dauerbetrieb. Sie brachte zwei Fehler ans Licht, die im Alltag ständig auftraten: der Watchdog startete die Ereignisverbindung 48-mal ohne Grund neu, und dabei gingen vereinzelt Zustandsmeldungen verloren. Dazu ein sauberes Herunterfahren, korrigierte Farbumrechnung und eine abgesicherte Auslieferung.
 
