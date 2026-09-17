@@ -6,6 +6,101 @@ Das Format basiert auf [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 und dieses Projekt hält sich an [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 [![Buy Me A Coffee](https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png)](https://www.buymeacoffee.com/bausi2k)
 
+## [2.9.1] - 2026-09-16
+**Nachsteuern, ohne dass man es sieht** – Die Prüfung, ob eine Leuchte einen Befehl wirklich ausgeführt hat, lag bisher zu früh und korrigierte zu grob: Sie schaltete das Gerät sichtbar ein zweites Mal. Beides ist behoben, und zwar auf Grundlage von 52 im Betrieb gemessenen Fällen statt einer Schätzung.
+
+### 🔧 Verbessert
+- **Es wird nur noch nachgesendet, was tatsächlich fehlt.** Stimmt allein die Helligkeit nicht, geht auch nur sie hinaus – ohne den Einschaltbefehl. Die Leuchte schaltet dadurch nicht sichtbar ein zweites Mal. Stimmt dagegen der Schaltzustand nicht, geht weiterhin der vollständige Befehl hinaus; eine Helligkeit an eine ausgeschaltete Leuchte nützt nichts.
+- **Die Prüfzeitpunkte liegen jetzt bei 5, 60 und 120 Sekunden** statt bei 15 und 90. Über elf Tage gemessen trat der Helligkeitseinbruch im Mittel nach rund 50 Sekunden auf, in Einzelfällen erst nach 112. Die alten 15 Sekunden bestätigten deshalb fast immer einen Zustand, der erst danach kippte – von 52 Fällen lagen nur 5 darunter. Die neue erste Stufe bei 5 Sekunden fängt stattdessen das ab, was der Funk beim ersten Versuch verschluckt hat.
+- Damit ersetzt die Prüfung, was bisher „Befehl wiederholen" blind erledigt hat: Statt denselben Befehl ein zweites Mal zu schalten, wird nachgesehen und gezielt nachgereicht. Im Log steht danach, **was** gefehlt hat.
+
+### ✨ Neu
+- **Zigbee-Kanal und Extended PAN ID im Diagnose-Tab.** Die Frequenz steht dabei – erst damit lässt sich ohne Nachschlagen beurteilen, ob das Zigbee-Netz einem WLAN-Kanal ins Gehege kommt. Zigbee und WLAN benutzen völlig verschiedene Kanalnummern; ein direkter Vergleich der Nummern führt in die Irre.
+
+### 🔒 Sicherheit
+- **Zwei gemeldete Schwachstellen im Query-String-Parser geschlossen** (beide moderat, beide in `qs`). Nur die Abhängigkeiten ändern sich, kein Sprung auf eine neue Hauptversion des Webservers – der Fix ist innerhalb der bisherigen Version zu haben.
+
+### 📐 Hinweise
+- Geräte mit eingeschaltetem Nachlesen erzeugen jetzt **drei** Abfragen je Befehl statt zwei.
+- Wird nur die Helligkeit nachgesendet, verlässt sich die Brücke auf den kurz zuvor gelesenen Zustand. Schaltet jemand genau in diesem Moment die Leuchte aus, geht die Helligkeit an eine ausgeschaltete Leuchte – folgenlos, aber anders als bisher, wo der mitgesendete Einschaltbefehl sie wieder eingeschaltet hätte.
+- Ein neuer Befehl verwirft die geplante Prüfung des vorherigen. Durch die späteren Zeitpunkte passiert das häufiger: Wer innerhalb von zwei Minuten erneut schaltet, bekommt für den ersten Befehl keine Prüfung mehr. Das ist gewollt – der zweite Befehl bringt seine eigene mit.
+- „Befehl wiederholen" bleibt als Option erhalten, wird für den Alltag aber nicht mehr gebraucht.
+
+### 🧪 Tests
+- Abdeckung von 224 auf 244 Tests erweitert.
+
+## [2.9.0] - 2026-08-26
+**Weniger überflüssige Funkbefehle, Logs über Tage statt Stunden** – Zwei Engstellen, die im Alltag niemandem auffallen, aber beide dieselbe Ursache hatten: Es wurde mehr gesendet und mehr gelesen als nötig. Bei Gruppen ging fast jeder zweite Befehl unnötig hinaus, und ein Logexport reichte nie weiter zurück als etwa zwei Tage – zu wenig, um einer Störung auf die Spur zu kommen, die nur alle paar Tage auftritt.
+
+### ✨ Neu
+- **Logexport über einen Zeitraum.** Neben dem Download-Knopf steht ein Auswahlfeld: letzter Tag, 3, 7 oder 14 Tage. Bisher waren es immer die letzten 10.000 Zeilen – im Betrieb etwa 50 Stunden. Die Datenbank bewahrt rund zehn Tage auf, diese Daten waren also längst vorhanden, nur nicht abrufbar. Genau daran sind zwei Auswertungen gescheitert, weil die Stichprobe zu klein blieb. Ohne Auswahl bleibt alles wie bisher.
+
+### 🔧 Verbessert
+- **Identische Gruppenbefehle gehen nicht mehr doppelt hinaus.** Alle Gruppen teilen sich eine Warteschlange, die höchstens einen Befehl pro Sekunde durchlässt – mehr verträgt die Hue Bridge nicht. Über fünf Tage gemessen war mehr als die Hälfte dieser Befehle wortwörtlich identisch mit dem vorhergehenden: eine Farbtemperatur-Nachführung, die im Minutentakt denselben Wert schickt, solange das Licht an ist. An einem Tag lief das über neun Stunden am Stück. Jeder dieser Befehle hat einen Platz belegt, den ein echter Befehl brauchte. **47,9 % davon entfallen jetzt.**
+- **Zwei Gruppen im selben Raum schalten wieder näher beieinander.** Weil die Warteschlange verstopft war, hing die zweite Gruppe im Büro im Mittel gut eine Sekunde hinter der ersten – in Lastspitzen standen beide sekundenlang gegenläufig, eine an und eine aus. Das tritt nun deutlich seltener auf.
+- **Die Suche im Logfenster durchsucht die gesamte Datenbank.** Bisher sah sie nur die letzten 10.000 Zeilen, weil erst geladen und dann gefiltert wurde. Ein Suchbegriff, dessen letzter Treffer drei Tage zurückliegt, wird jetzt gefunden.
+- **Das Dashboard lädt nur noch, was es anzeigt** – 100 Zeilen statt 10.000 bei jeder Aktualisierung.
+- **Mehrfach angegebene Suchparameter** führen nicht mehr zu einem Serverfehler, sondern zu einer verständlichen Meldung.
+
+### 📐 Hinweise
+- Das Überspringen gilt **nur für Gruppen**. Bei einzelnen Leuchten ist der Anteil identischer Wiederholungen gering, und die Warteschlange dort ist zehnmal schneller.
+- Geräte mit „Befehl wiederholen", „Einschalten aufteilen" oder „Zustand nachlesen" sind ausgenommen. Dort ist das wiederholte Senden ja gerade der Zweck.
+- **Spätestens alle fünf Minuten geht auch ein unveränderter Befehl wieder hinaus.** Die Brücke merkt sich beim Senden, was sie angeordnet hat – nicht, was die Leuchte tatsächlich getan hat. Ohne diese Auffrischung bliebe eine Gruppe, die einen Befehl nie ausgeführt hat, dauerhaft im falschen Zustand. Fünf Minuten nehmen fast den ganzen Gewinn mit: eine Minute spart nur 4,7 %, fünfzehn Minuten bringen gegenüber fünf nur 2,6 Prozentpunkte mehr, verdreifachen aber die Zeit, in der eine Abweichung unbemerkt stehen bleibt.
+- Eine Änderung, die jemand direkt in der Hue-App vornimmt, wird weiterhin korrigiert – sie meldet sich über den Eventstream, und der Befehl geht dann hinaus.
+- Übersprungene Befehle stehen im Debug-Modus als `SKIP` im Log. Ohne diesen Eintrag sähe es aus, als wäre ein Befehl verlorengegangen.
+- Die Aufbewahrung der Logdatenbank bleibt unverändert bei 50.000 Zeilen, also rund zehn Tagen.
+
+### 🧪 Tests
+- Abdeckung von 193 auf 224 Tests erweitert.
+- Ehrlich zur Wirkung im Dashboard: Die Log-Abfrage hat den Betrieb zwar blockiert, aber gemessen nur 2,96 ms alle zwei Sekunden. Als Erklärung für verpasste Ereignisse oder verzögerte Rückmeldungen scheidet sie damit aus – das war eine Vermutung, die die Messung nicht bestätigt hat. Die Abfrage ist jetzt trotzdem rund neunzigmal schneller.
+
+## [2.8.0] - 2026-08-19
+**Zustand nachlesen statt der Bridge glauben** – Die Hue Bridge bestätigt einen Befehl sofort, noch bevor die Leuchte ihn ausgeführt hat. Stimmt beides nicht überein, fällt das erst eine Minute später auf – und bis dahin hat Loxone einen Zustand gemeldet bekommen, den es nie gab. Neu ist eine Option, die genau das prüft und bei echter Abweichung nachsteuert.
+
+### ✨ Neu
+- **Option „Zustand nachlesen und korrigieren" je Gerät:** 15 und 90 Sekunden nach einem Befehl wird der tatsächliche Zustand der Leuchte abgefragt. Nur wenn er nachweislich abweicht, geht der Befehl ein zweites Mal hinaus. Die beiden Zeitpunkte sind nicht geraten, sondern aus dem Dauerbetrieb abgeleitet: ein Helligkeitseinbruch zeigte sich nach 11 Sekunden, unerwartete Ein-/Aus-Wechsel nach 49 bis 82 Sekunden. Eine einzelne Prüfung fängt immer nur eines von beidem.
+- **Neue Spalte „Nachgesteuert" im Diagnose-Tab**, in der Form „2 / 14“: wie oft eine Prüfung eine Abweichung gefunden hat, gemessen an allen Prüfungen. Bei Geräten ohne eingeschaltetes Nachlesen bleibt die Spalte leer – eine 0 würde dort fälschlich nahelegen, es sei geprüft worden.
+
+### 🔧 Verbessert
+- **Ehrlichere Beschriftung der Funkmaßnahmen.** Für „Einschalten aufteilen“ und „Befehl wiederholen“ ließ sich in einer Messung über 46 Stunden **kein Nutzen nachweisen**. Entscheidend war die Vergleichsleuchte ohne jede Maßnahme: sie hat sich im selben Zeitraum genauso verbessert. Die ursprünglichen Ausgangswerte beruhten auf zu wenigen Schaltvorgängen, um daraus etwas abzuleiten. Beide Optionen bleiben erhalten, sind aber nicht mehr als empfohlen gekennzeichnet; der Hilfetext benennt das Ergebnis offen.
+- Vermutlicher Grund für ihr Versagen: die Wiederholung folgt bereits nach 300 Millisekunden und fällt damit in dasselbe Störfenster. Ist der Funkweg veraltet, ist er es auch 300 Millisekunden später. Das Nachlesen setzt deshalb deutlich später an.
+
+### 📐 Hinweise
+- Das Nachlesen läuft **nur für ausdrücklich markierte Geräte** und über dieselbe Warteschlange wie alle anderen Befehle. Bei 30 Leuchten wären es sonst 60 zusätzliche Abfragen pro Schaltvorgang.
+- Ist die Bridge beim Nachlesen nicht erreichbar, wird **nicht** nachgesteuert. Ein fehlgeschlagener Abruf sagt nichts über die Leuchte aus.
+- Die drei Maßnahmen schließen einander weiterhin aus – gemeinsam aktiviert ließe sich nicht mehr sagen, welche geholfen hat.
+
+### 🧪 Tests
+- Abdeckung von 174 auf 193 Tests erweitert.
+
+## [2.7.1] - 2026-08-14
+**Einschaltbefehl aufteilen** – Manche Leuchten gehen an, bleiben aber auf ihrer geringsten Helligkeit stehen. Die Ursache ließ sich diesmal am laufenden System nachweisen und gezielt behandeln. Dazu alle bekannten Sicherheitslücken in den Abhängigkeiten.
+
+### ✨ Neu
+- **Option „Einschalten aufteilen" je Gerät:** Statt Einschalten, Helligkeit und Farbe in einem Rutsch zu senden, geht zuerst nur das Einschalten hinaus und 100 ms später der Rest. Hintergrund: Die Hue Bridge setzt aus einem Befehl mehrere Funktelegramme ab. War die Leuchte stundenlang aus, ist ihr Funkweg im Netz veraltet – das Einschalten wird so lange wiederholt, bis es ankommt, doch der unmittelbar folgende Helligkeitswert fällt genau in das Zeitfenster, in dem die Verbindung noch nicht steht. Er geht verloren, und die Leuchte bleibt auf ihrem gespeicherten Wert stehen; nach dem Ausschalten ist das die unterste Stufe. Die Pause liegt jetzt dort, wo die Verbindung entsteht.
+- **Die beiden Gegenmaßnahmen sind jetzt ein Auswahlfeld** („Keine" / „Einschalten aufteilen" / „Befehl wiederholen") statt zweier Häkchen. Sie schließen einander aus – gemeinsam aktiviert ließe sich nicht mehr sagen, welche geholfen hat.
+
+### 🔒 Sicherheit
+- **Alle 9 gemeldeten Schwachstellen in den Abhängigkeiten behoben** (5 hoch, 4 mittel). Nur `package-lock.json` ändert sich; alle Sprünge bleiben innerhalb der bisherigen Versionsbereiche. Praktisch erreichbar waren in einer Heimnetz-Installation zwei davon, beide über die Weboberfläche und beide auf Überlastung ausgelegt.
+
+### 🧹 Aufgeräumt
+- **Fünf Dateien aus dem Projektwurzelverzeichnis entfernt**, die dort nicht hingehörten. Vier davon führte Node bei jedem Testlauf mit aus, ohne dass sie irgendetwas prüften – sie gaben ihr Ergebnis nur auf der Konsole aus und konnten daher nie fehlschlagen. Eine davon war ein versehentlich hereingeratenes Probe-Skript für ein ganz anderes Gerät, das bei jedem Durchlauf echte Netzwerkanfragen stellte und allein 31 Sekunden kostete. Die zwei inhaltlich sinnvollen Fälle – Batterieanzeige und Entdopplung erkannter Befehle – sind als richtige Tests mit Zusicherungen neu geschrieben.
+
+### 🧪 Tests
+- Abdeckung von 147 auf 174 Tests erweitert. Der Testlauf dauert dadurch nur noch ein Viertel so lang.
+- Ein zeitkritischer Test der Warteschlange prüfte einen Zwischenzustand und schlug dadurch je nach Auslastung der Maschine fehl. Er hatte den Build der Version 2.7.0 blockiert – diese Versionsnummer wurde deshalb nie veröffentlicht.
+- Eine Prüfung sorgt künftig dafür, dass im Wurzelverzeichnis keine Datei mehr liegt, die der Testlauf versehentlich mit ausführt.
+
+## [2.6.1] - 2026-08-13
+**Sensorliste nach Aktivität sortiert** – Ein ausgelöster Melder stand bisher weiter unten als ein ruhender mit schwächerer Batterie. Genau das Gerät, nach dem man in der Liste sucht, landete dadurch am Ende.
+
+### 🔧 Verbessert
+- **Aktive Sensoren stehen jetzt oben.** Ausgelöste Bewegungsmelder und offene Kontakte werden vor die ruhenden gereiht, getrennt durch eine dezente Linie. Innerhalb beider Blöcke gilt unverändert: schwache Batterie zuerst, dann alphabetisch. Temperatur- und Helligkeitswerte zählen dabei bewusst nicht als „aktiv" – sie liegen immer an und würden den oberen Block dauerhaft füllen.
+- Die Aufteilung geschieht innerhalb der bestehenden Gruppen (Kontakte, Bewegung, Sonstige), die Überschriften und ihre Zähler bleiben erhalten. Die Listen der Lichter und Schalter sind unverändert.
+
+### 🧪 Tests
+- Abdeckung von 135 auf 147 Tests erweitert.
+
 ## [2.6.0] - 2026-08-13
 **Unzuverlässige Leuchten erkennen und ausgleichen** – Manche Leuchten führen Befehle nicht zuverlässig aus: sie schalten nicht ab, oder sie gehen an und bleiben dabei auf ihrer alten, oft sehr niedrigen Helligkeit stehen. Betroffen sind typischerweise Geräte anderer Hersteller. Diese Version macht das Problem im Dashboard sichtbar und bietet eine Gegenmaßnahme.
 
