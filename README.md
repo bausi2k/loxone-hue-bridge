@@ -6,7 +6,7 @@
 
 Sie ermöglicht eine extrem schnelle, lokale Steuerung ohne Cloud-Verzögerung und nutzt die moderne Hue Event-Schnittstelle (SSE), um Statusänderungen in Echtzeit an Loxone (UDP) und MQTT Broker zurückzumelden.
 
-## 🚀 Features V2.6.0
+## 🚀 Features V2.11.0
 
 * **Nativer „Alles" Befehl:** Nutzt die Hue `bridge_home` API für blitzschnelles Ausschalten des gesamten Hauses.
 * **Hue Effekte & Alert:** Steuere Lampen mit atmosphärischen Effekten direkt aus Loxone:
@@ -17,9 +17,10 @@ Sie ermöglicht eine extrem schnelle, lokale Steuerung ohne Cloud-Verzögerung u
 * **Modularer Kern:** Hochperformante und wartbare Backend-Architektur durch saubere Modul-Trennung (`lib/`).
 * **Smart Setup:** Automatische Suche der Hue Bridge und Pairing per Web-Interface.
 * **Live Dashboard:** Echtzeit-Anzeige aller Lichter (mit Live-Werten für Kelvin/Hex/Dim), Sensoren und Batterieständen (inkl. Warnsystem bei ≤ 10 %).
+* **Oberfläche:** Hell-/Dunkelmodus (dreistufig, System als Vorgabe), linke Navigationsspalte mit Burgermenü auf dem Handy, Diagnose und System in Untertabs gegliedert, und ein Layout, das breite Bildschirme bis 1800 px nutzt.
 * **Smart Mapping:** Einfache Zuordnung per „Klick & Wähl" mit automatischer Duplikatsfilterung bei erkannten Befehlen.
 * **Erweiterter Diagnose-Tab:** Zeigt Gerätestatus, Zigbee-Konnektivität pro Gerät und eine vollständige Übersicht aller Lampen-Fähigkeiten (Dimmen, Farbe, Weißton, unterstützte Effekte).
-* **Automatisierte Tests:** Test-Infrastruktur auf Basis des nativen Node.js Test-Runners mit 135 Tests.
+* **Automatisierte Tests:** Test-Infrastruktur auf Basis des nativen Node.js Test-Runners mit 387 Tests.
 * **Persistent Logging (SQLite):** Dank nativer SQLite-Datenbank bleiben Logs auch nach Neustarts erhalten und sind extrem performant durchsuchbar (Volltextsuche & Filter). Automatische Rotation bei 50.000 Einträgen hält die Datenbank klein.
 * **Backup & Restore:** Lade deine komplette Konfiguration inkl. Mappings als Backup herunter und stelle sie bei Bedarf wieder her.
 * **Loxone Integration:**
