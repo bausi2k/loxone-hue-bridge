@@ -6,6 +6,48 @@ Das Format basiert auf [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 und dieses Projekt hält sich an [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 [![Buy Me A Coffee](https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png)](https://www.buymeacoffee.com/bausi2k)
 
+## [2.11.0] - 2026-09-21
+**Was auf dem Handy nicht ging** – Die Oberflächen-Umstellung aus 2.10.0 hatte drei Stellen übersehen, die erst im Alltag auffielen: ein Detailfenster, in dem man feststeckte, Gerätekarten, die aus dem Bildschirm liefen, und Farben, die den Dunkelmodus nicht kannten. Dazu eine klarere Sensorliste.
+
+### 🐛 Behoben
+- **Im Geräte-Detailfenster war man auf dem Handy gefangen.** Gemessen auf 402 × 874: 1154 px Inhalt in einer 699 px hohen Box, ohne Scrollbereich. Der Schließen-Knopf lag 300 px unterhalb des Sichtbaren, rund 455 px Inhalt waren unerreichbar. Das Kreuz zum Schließen war 10 × 15 px groß – Apple nennt 44 × 44 als Mindestmaß. Die Fensterhöhe richtet sich jetzt zusätzlich nach `dvh`, weil `vh` auf iOS die große Ansicht ohne die Safari-Leisten meint.
+- **Gerätekarten liefen rechts aus dem Bildschirm.** Bei 1900 px standen 45 px waagrechter Überlauf zu Buche, 12 von 14 Karten waren betroffen, der größte Überstand betrug 102 px. Lange Namen ohne Leerzeichen konnten nicht umbrechen und schoben die Badges hinaus.
+- **Farben, die den Dunkelmodus nicht kannten.** Sechs Chips und der Export-Knopf trugen feste Hellfarben. Der Knopf stand im Dunkelmodus mit weißer Schrift auf fast weißem Grund (Kontrast 1,06 : 1), der Chip „🔓 OFFEN" bei 1,27 : 1, der Batterie-Chip unter 20 % bei 1,80 : 1 in beiden Modi. Alle liegen jetzt über dem Richtwert 4,5.
+
+### ✨ Neu
+- **Beschriftete Blöcke in der Sensorliste.** Innerhalb jeder Gruppe steht jetzt „Ausgelöst (2)" über „Ruhig (10)" beziehungsweise „Offen" über „Geschlossen". Bisher trennte die beiden nur eine dünne Linie, der man nicht ansah, was sie bedeutet. Fühler ohne Zustandsbegriff – Temperatur, Helligkeit – bekommen bewusst keine Blocknamen.
+
+### 🔧 Verbessert
+- **„AUS" ist nicht mehr hinterlegt.** Nur der eingeschaltete Zustand ist eine Meldung; der ausgeschaltete ist der Normalfall.
+- Die Überschrift der rechten Spalte heißt jetzt „Zugeordnet". Sie meinte immer die eingerichteten Zuordnungen – mit einem Block „Ausgelöst" darunter wäre „Aktiv" zweideutig geworden.
+
+### 📐 Hinweise
+- **Node 24 ist jetzt in `package.json` gefordert.** Das war schon vorher so – Abbild und CI laufen seit jeher darauf – stand aber nirgends. Unter Node 22 gab es statt einer Meldung einen Absturz mit `ERR_UNKNOWN_BUILTIN_MODULE` für `node:sqlite`.
+- Ob eine Gerätekarte eng ist, hängt am Gitter und nicht an der Fensterbreite. Die Karte stellt sich deshalb anhand ihrer eigenen Breite um. Browser ohne Unterstützung dafür (vor Chrome 105, Safari 16, Firefox 110) zeigen sie einzeilig, ohne Überlauf.
+- **Die Release-Notes zu 2.10.0 sind falsch.** Der Tag wurde gesetzt, bevor der zugehörige CHANGELOG-Abschnitt geschrieben war; der Workflow hat deshalb den Text von 2.9.1 veröffentlicht. Der Abschnitt unten trägt nach, was in 2.10.0 tatsächlich enthalten ist.
+- Am Verhalten der Brücke selbst ändert sich auch in dieser Version nichts. Es bleibt eine reine Oberflächen-Ausgabe.
+
+### 🧪 Tests
+- Abdeckung von 244 auf 387 Tests erweitert (2.10.0 und 2.11.0 zusammen).
+- Neu darunter: eine Prüfung, dass Fensterabfragen im Stylesheet am Dateiende stehen – bei gleicher Spezifität gewinnt sonst die spätere Regel, und ein Umbruch blieb wirkungslos, obwohl er richtig geschrieben war.
+- Ebenfalls neu: ein Abgleich der Node-Version zwischen `package.json`, `Dockerfile` und Workflow sowie ein Abgleich der Versionsnummer zwischen `package.json`, `package-lock.json`, CHANGELOG und README. Letzterer hätte die falschen Notizen zu 2.10.0 verhindert.
+
+## [2.10.0] - 2026-09-17
+**Die Oberfläche neu geordnet** – Hell- und Dunkelmodus, eine Navigationsspalte statt Reiterleiste, und die Inhalte in Untertabs sortiert.
+
+Hinweis: Die auf GitHub hinterlegten Notizen zu diesem Release zeigen versehentlich den Text von 2.9.1. Was wirklich enthalten ist, steht hier.
+
+### ✨ Neu
+- **Hell- und Dunkelmodus, dreistufig.** Der Schalter in der Kopfzeile kennt Hell, Dunkel und System; System ist die Vorgabe und folgt der Einstellung des Geräts. Die Wahl bleibt erhalten und wird vor dem ersten Zeichnen angewendet, damit nicht kurz das falsche Schema aufblitzt.
+- **Navigationsspalte statt Reiterleiste.** Auf breiten Schirmen steht die Navigation links und bleibt beim Blättern stehen. Auf dem Handy liegt sie hinter einem Burgermenü, das sich über die Ansicht legt und beim Wechsel von selbst schließt.
+- **Untertabs in Diagnose und System.** Statt einer langen Kachelkolonne gibt es je drei Bereiche: Netzwerk · Geräte · Zuverlässigkeit und Einstellungen · Wartung · Logs. Die Wahl wird je Gruppe getrennt gemerkt.
+- **Namensvorschlag beim Anlegen.** Erst das Hue-Gerät wählen, dann den Namen – und der wird aus dem Gerätenamen vorgeschlagen: „WC Spiegel" wird zu `wcspiegel`, „Küche Arbeitslicht" zu `kuechearbeitslicht`. Umlaute werden ausgeschrieben, nicht weggeworfen. Ist der Name vergeben, wird durchnummeriert. Wer selbst tippt, behält seine Eingabe.
+
+### 🔧 Verbessert
+- **Breite Bildschirme werden genutzt.** Bis 1800 px Inhaltsbreite, die Geräteliste in mehreren Spalten statt einer einzigen langen Kolonne.
+- **Die Version steht in der Kopfzeile** statt als erste Zeile in den Einstellungen. Es ist die Angabe, die man am häufigsten kurz nachsieht. Solange sie noch nicht geladen ist, bleibt der Platz leer statt eine leere Pille zu zeigen.
+- **Die Einstellungen sind in Abschnitte gegliedert**, deren Überschriften dem Farbschema folgen statt einem festen Grauton.
+
 ## [2.9.1] - 2026-09-16
 **Nachsteuern, ohne dass man es sieht** – Die Prüfung, ob eine Leuchte einen Befehl wirklich ausgeführt hat, lag bisher zu früh und korrigierte zu grob: Sie schaltete das Gerät sichtbar ein zweites Mal. Beides ist behoben, und zwar auf Grundlage von 52 im Betrieb gemessenen Fällen statt einer Schätzung.
 
