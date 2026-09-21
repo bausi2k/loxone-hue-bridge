@@ -24,7 +24,7 @@ und dieses Projekt hält sich an [Semantic Versioning](https://semver.org/spec/v
 ### 📐 Hinweise
 - **Node 24 ist jetzt in `package.json` gefordert.** Das war schon vorher so – Abbild und CI laufen seit jeher darauf – stand aber nirgends. Unter Node 22 gab es statt einer Meldung einen Absturz mit `ERR_UNKNOWN_BUILTIN_MODULE` für `node:sqlite`.
 - Ob eine Gerätekarte eng ist, hängt am Gitter und nicht an der Fensterbreite. Die Karte stellt sich deshalb anhand ihrer eigenen Breite um. Browser ohne Unterstützung dafür (vor Chrome 105, Safari 16, Firefox 110) zeigen sie einzeilig, ohne Überlauf.
-- **Die Release-Notes zu 2.10.0 sind falsch.** Der Tag wurde gesetzt, bevor der zugehörige CHANGELOG-Abschnitt geschrieben war; der Workflow hat deshalb den Text von 2.9.1 veröffentlicht. Der Abschnitt unten trägt nach, was in 2.10.0 tatsächlich enthalten ist.
+- **Die Release-Notes zu 2.10.0 waren falsch.** Der Tag wurde gesetzt, bevor der zugehörige CHANGELOG-Abschnitt geschrieben war; der Workflow hat deshalb den Text von 2.9.1 veröffentlicht. Der Abschnitt unten trägt nach, was in 2.10.0 tatsächlich enthalten ist, und die Notizen auf GitHub sind inzwischen korrigiert.
 - Am Verhalten der Brücke selbst ändert sich auch in dieser Version nichts. Es bleibt eine reine Oberflächen-Ausgabe.
 
 ### 🧪 Tests
@@ -35,7 +35,7 @@ und dieses Projekt hält sich an [Semantic Versioning](https://semver.org/spec/v
 ## [2.10.0] - 2026-09-17
 **Die Oberfläche neu geordnet** – Hell- und Dunkelmodus, eine Navigationsspalte statt Reiterleiste, und die Inhalte in Untertabs sortiert.
 
-Hinweis: Die auf GitHub hinterlegten Notizen zu diesem Release zeigen versehentlich den Text von 2.9.1. Was wirklich enthalten ist, steht hier.
+Hinweis: Der Tag wurde gesetzt, bevor dieser Abschnitt geschrieben war. Auf GitHub stand deshalb zunächst der Text von 2.9.1; die Notizen dort sind seit 21.09.2026 korrigiert.
 
 ### ✨ Neu
 - **Hell- und Dunkelmodus, dreistufig.** Der Schalter in der Kopfzeile kennt Hell, Dunkel und System; System ist die Vorgabe und folgt der Einstellung des Geräts. Die Wahl bleibt erhalten und wird vor dem ersten Zeichnen angewendet, damit nicht kurz das falsche Schema aufblitzt.
