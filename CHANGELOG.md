@@ -6,6 +6,22 @@ Das Format basiert auf [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 und dieses Projekt hält sich an [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 [![Buy Me A Coffee](https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png)](https://www.buymeacoffee.com/bausi2k)
 
+## [2.11.1] - 2026-09-23
+**Ueberholte Folgebefehle gehen nicht mehr hinaus** – Bei schneller Befehlsfolge (etwa einem Dimmvorgang mit Zwischenwerten) konnte die zweite Haelfte von „Einschalten aufteilen" oder eine geplante „Befehl wiederholen"-Wiederholung ueberholt und trotzdem gesendet werden. Sichtbar als kurzes Aus-An-Flackern, obwohl der zuletzt gewuenschte Zustand laengst feststand.
+
+### 🐛 Behoben
+- **Ueberholte Folgebefehle werden jetzt verworfen statt gesendet.** Betroffen waren die Optionen „Einschalten aufteilen" und „Befehl wiederholen": Ihre Nacharbeit prüfte bislang nur beim Planen, ob sie noch aktuell ist – nicht mehr unmittelbar vor dem Senden. Dazwischen liegt die Befehlsdrosselung, in einem am Betrieb gemessenen Fall knapp zwei Sekunden, in denen zwei weitere Befehle eintrafen. Die Prüfung sitzt jetzt zusätzlich direkt vor dem Senden; ein verworfener Befehl steht als `SKIP` im Debug-Log.
+- **Live am Produktivsystem nachvollzogen:** Eine Lampe mit „Einschalten aufteilen" erhielt binnen zehn Sekunden zehn abwechselnde Ein-/Aus-Befehle. Ohne die Korrektur landeten die Telegramme über drei Sekunden verteilt und in vertauschter Reihenfolge auf der Leitung – mit der Korrektur nur noch das jeweils Aktuelle.
+
+### 📐 Hinweise
+- „Zustand nachlesen und korrigieren" war von diesem Fehler nicht betroffen: Es sendet keine geplante Nacharbeit, sondern liest den Zustand nach und entscheidet dann neu.
+- Primärbefehle werden nie verworfen – nur die Nacharbeit einer Funkmaßnahme.
+- Am Verhalten der Optionen selbst ändert sich nichts. Wer „Einschalten aufteilen" oder „Befehl wiederholen" bereits nicht empfohlen bekommen hat, bekommt sie weiterhin nicht empfohlen (siehe 2.9.1).
+
+### 🧪 Tests
+- Abdeckung von 387 auf 394 Tests erweitert.
+- Die neuen Tests steuern den Ablauf über ein kontrolliertes Versprechen statt über Wartezeiten, damit sie nicht von der Auslastung der Maschine abhängen. Beide Absicherungen wurden gegengeprüft, indem der jeweilige Fehler absichtlich wieder eingebaut wurde.
+
 ## [2.11.0] - 2026-09-21
 **Was auf dem Handy nicht ging** – Die Oberflächen-Umstellung aus 2.10.0 hatte drei Stellen übersehen, die erst im Alltag auffielen: ein Detailfenster, in dem man feststeckte, Gerätekarten, die aus dem Bildschirm liefen, und Farben, die den Dunkelmodus nicht kannten. Dazu eine klarere Sensorliste.
 
