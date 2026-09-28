@@ -6,6 +6,21 @@ Das Format basiert auf [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 und dieses Projekt hält sich an [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 [![Buy Me A Coffee](https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png)](https://www.buymeacoffee.com/bausi2k)
 
+## [2.11.2] - 2026-09-28
+**Wartezeit in der Befehlswarteschlange sichtbar** – Nach Meldungen über Lichter, die mehrere Sekunden zum Schalten brauchten, wurde ein Logexport ausgewertet. Ergebnis: kein Absturz, kein fehlschlagender Healthcheck, kein Fehler in unserem Code – die spürbaren Verzögerungen gingen durchgängig auf zwei Ursachen zurück, die außerhalb der Bridge liegen: Netzwerkaussetzer der Hue Bridge selbst (ECONNREFUSED, HTTP 503, Timeouts) und Befehlsschwärme, die sich die gemeinsame Warteschlange aller Lichter teilen. Damit sich das künftig ohne Log-Archäologie klären lässt, protokolliert die Bridge jetzt die tatsächliche Wartezeit.
+
+### ✨ Neu
+- **Jeder gesendete Befehl protokolliert seine Wartezeit in der Warteschlange:** `OUT -> Hue (wcspiegel) [Warteschlange 18432ms]: {...}`. Das trennt direkt, ob ein Befehl in unserer Schlange wartete oder ob die Bridge selbst gebraucht hat.
+- **Ab 2 Sekunden Wartezeit gibt es zusätzlich eine Warnmeldung** – mit Namen, Wartezeit und der Zahl noch wartender Befehle. Sie ist auch **ohne eingeschalteten Debug-Modus** sichtbar, anders als die reine Protokollzeile.
+- Auch eine durch Überholung verworfene Nacharbeit („Einschalten aufteilen", „Befehl wiederholen") meldet jetzt ihre Wartezeit – sie ist selbst ein Symptom einer langsamen Warteschlange.
+
+### 📐 Hinweise
+- Diese Version ändert nichts am Schaltverhalten selbst. Sie macht nur sichtbar, was vorher nur aus Rohlogs rekonstruierbar war.
+- Bei der Untersuchung bestätigt: kein einziger Absturz-Eintrag im gesamten Beobachtungszeitraum, kein Docker-Healthcheck definiert, der eigene Neustarts auslösen könnte.
+
+### 🧪 Tests
+- Abdeckung von 394 auf 400 Tests erweitert.
+
 ## [2.11.1] - 2026-09-23
 **Ueberholte Folgebefehle gehen nicht mehr hinaus** – Bei schneller Befehlsfolge (etwa einem Dimmvorgang mit Zwischenwerten) konnte die zweite Haelfte von „Einschalten aufteilen" oder eine geplante „Befehl wiederholen"-Wiederholung ueberholt und trotzdem gesendet werden. Sichtbar als kurzes Aus-An-Flackern, obwohl der zuletzt gewuenschte Zustand laengst feststand.
 
