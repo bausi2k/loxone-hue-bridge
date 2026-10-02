@@ -6,6 +6,31 @@ Das Format basiert auf [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 und dieses Projekt hält sich an [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 [![Buy Me A Coffee](https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png)](https://www.buymeacoffee.com/bausi2k)
 
+## [2.12.0] - 2026-10-02
+**Alle Geräteinformationen auf einen Klick** – Eine Rückmeldung zu einem Gledopto-Controller (RGB- und Warmweiß-Ausgang) warf die Frage auf, welchen Weißton-Bereich die Bridge für die Lampe meldet. Das war nirgends sichtbar: Die Diagnose zeigte bei „Weiß" nur ein Häkchen. Jetzt steht dort der Bereich, und mit ihm alles, was die Bridge und wir über ein Gerät wissen.
+
+### ✨ Neu
+- **Diagnose → Geräte ist nach Typ gruppiert** (Licht, Gruppe, Sensor, Schalter, jeweils mit Anzahl). Jede Zeile ist klickbar, auch per Tastatur, und trägt ein kleines ⓘ als Hinweis. Die Spalte „Typ" entfällt, der Gruppenkopf ersetzt sie.
+- **Das Detailfenster zeigt jetzt alle Angaben zu einem Gerät:**
+    - **Fähigkeiten** mit dem Weißton-Bereich in mirek und Kelvin – als *verwendet* und als *von der Bridge gemeldet*. Meldet die Bridge keinen Bereich, steht dort ausdrücklich „Ersatzwert". Dazu kleinste Helligkeit, Farbraum und Effekte.
+    - **Gerät** (Hersteller, Produkt, Modell, Software, Zertifizierung), **Zigbee** (Status, MAC-Adresse, Kanal), **Strom** (Batterie), bei Gruppen die **Mitglieder**.
+    - **Alle übrigen Bridge-Dienste** mit sämtlichen Feldern: Zustand des Lichts, Bewegung, Temperatur, Helligkeit, Kontakt, Tasten.
+    - **Zuverlässigkeit** seit dem letzten Neustart.
+    - Aufklappbar: **lokale Daten** (Mapping und Status, jedes Feld) und die **Rohdaten der Bridge** als JSON – gedacht zum Kopieren in ein Issue.
+- Das Fenster öffnet sich auch dann, wenn die Zielliste das Gerät nicht enthält. Die Bridge-Daten werden nach dem Öffnen nachgeladen: Das Fenster geht sofort auf, und eine träge Bridge blockiert es nicht. Antwortet sie nicht, bleiben die lokalen Daten sichtbar und der Grund steht im Fenster.
+
+### 🔒 Sicherheit
+- **axios 1.19.0 → 1.20.0.** `npm audit` meldete zwölf Hinweise (acht mit hohem Schweregrad), alle in 1.20.0 behoben. Sie betreffen überwiegend Fetch- und HTTP/2-Adapter, Proxys und Weiterleitungen, die wir nicht nutzen; die tatsächliche Angriffsfläche im lokalen Netz war gering.
+- **ip-address 10.5.0 → 10.7.2** (Dependabot, indirekte Abhängigkeit von `mqtt`), behebt vier Hinweise.
+- Die neue Detail-Route fragt nur Geräte ab, die einem Mapping zugeordnet sind, und prüft die UUID, bevor sie in einen Pfad zur Bridge gelangt. Sie ist damit kein Zugang zu beliebigen Bridge-Ressourcen.
+
+### 📐 Hinweise
+- Am Schaltverhalten ändert sich nichts. Die Umrechnung von Kelvin auf den gemeldeten Bereich der Lampe gab es schon; sichtbar war nur nie, welcher Bereich dabei zugrunde liegt.
+- Die Chips auf den Lampen- und Sensor-Tabs öffnen dasselbe Fenster und zeigen die neuen Abschnitte ebenfalls.
+
+### 🧪 Tests
+- Abdeckung von 400 auf 420 Tests erweitert.
+
 ## [2.11.2] - 2026-09-28
 **Wartezeit in der Befehlswarteschlange sichtbar** – Nach Meldungen über Lichter, die mehrere Sekunden zum Schalten brauchten, wurde ein Logexport ausgewertet. Ergebnis: kein Absturz, kein fehlschlagender Healthcheck, kein Fehler in unserem Code – die spürbaren Verzögerungen gingen durchgängig auf zwei Ursachen zurück, die außerhalb der Bridge liegen: Netzwerkaussetzer der Hue Bridge selbst (ECONNREFUSED, HTTP 503, Timeouts) und Befehlsschwärme, die sich die gemeinsame Warteschlange aller Lichter teilen. Damit sich das künftig ohne Log-Archäologie klären lässt, protokolliert die Bridge jetzt die tatsächliche Wartezeit.
 
