@@ -6,6 +6,21 @@ Das Format basiert auf [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 und dieses Projekt hält sich an [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 [![Buy Me A Coffee](https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png)](https://www.buymeacoffee.com/bausi2k)
 
+## [2.12.1] - 2026-10-02
+**Umbenennungen aus der Hue-App kommen an** – Wer eine Lampe, eine Gruppe oder einen Sensor in der Hue-App umbenannte, sah in der Zuordnung weiter den alten Namen, ebenso im Backup und als Kommentar im XML-Export für Loxone. Der Name wird jetzt aus der Bridge nachgezogen.
+
+### 🐛 Behoben
+- **Der Name eines Geräts wird mit der Bridge abgeglichen** – beim Start und beim Laden der Zielliste im Dashboard. Geändert wird nur die Beschriftung: Befehlsnamen, die Zuordnung per UUID, die Einstellungen je Gerät und alles, was in Loxone programmiert ist, bleiben unberührt. Jede Änderung steht im Log: `Name aktualisiert (wcspiegel): "alt" -> "neu"`.
+- Umbenannt wird nur, was die Bridge liefert. Fehlt ein Gerät in der Antwort oder fällt eine Abfrage aus, bleibt der gespeicherte Name stehen – ein fehlender Eintrag ist kein Beleg für ein gelöschtes Gerät.
+- Die Zusätze `(Taste n)` und `(Drehring)` bleiben erhalten. Der Export erkennt Drehringe also weiterhin.
+
+### 📐 Hinweise
+- Beim ersten Start nach dem Update werden veraltete Beschriftungen einmalig korrigiert. Wer in der `mapping.json` oder einem Backup von Hand eigene Texte in `hue_name` gepflegt hat, verliert sie; die Oberfläche bietet dafür keine Eingabe.
+- Die Rotary-Eingänge im Loxone-Export entstehen jetzt nur noch für den Drehring selbst. Erkannt wird er am Diensttyp bei der Bridge, nicht mehr am Namenstext. Vorher bekam auch eine einzelne Taste eines Geräts mit „Dial" im Namen diese Eingänge – ohne Wirkung, denn für sie kommen nie Drehereignisse an.
+
+### 🧪 Tests
+- Abdeckung von 420 auf 438 Tests erweitert.
+
 ## [2.12.0] - 2026-10-02
 **Alle Geräteinformationen auf einen Klick** – Eine Rückmeldung zu einem Gledopto-Controller (RGB- und Warmweiß-Ausgang) warf die Frage auf, welchen Weißton-Bereich die Bridge für die Lampe meldet. Das war nirgends sichtbar: Die Diagnose zeigte bei „Weiß" nur ein Häkchen. Jetzt steht dort der Bereich, und mit ihm alles, was die Bridge und wir über ein Gerät wissen.
 
