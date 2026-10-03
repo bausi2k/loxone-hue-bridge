@@ -6,6 +6,19 @@ Das Format basiert auf [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 und dieses Projekt hält sich an [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 [![Buy Me A Coffee](https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png)](https://www.buymeacoffee.com/bausi2k)
 
+## [2.12.2] - 2026-10-03
+**Drehring-Eingänge für Dial-Geräte wieder im Export** – Korrektur zu 2.12.1. Dort fehlten im Loxone-Export bei Zuordnungen, die an einer Taste eines Hue Tap Dial hängen, die Eingänge für die Drehrichtung.
+
+### 🐛 Behoben
+- **Zuordnungen an einer Taste eines Hue Tap Dial bekommen im Export wieder die Eingänge „Rotary CW" und „Rotary CCW".** 2.12.1 erkannte Drehringe nur noch am Drehring-Dienst selbst. Ein Drehereignis kommt aber bei jeder Zuordnung des Geräts an, wenn der Drehring nicht selbst zugeordnet ist – bei so einer Taste also genau dort, wo Loxone den Eingang braucht. Erkannt wird jetzt am Gerät: Hat es einen Drehring-Dienst, bekommen alle seine Zuordnungen die Eingänge.
+
+### 📐 Hinweise
+- **Berichtigung zu 2.12.1:** Die dortige Aussage, Einzeltasten bekämen nie Drehereignisse und die Eingänge seien für sie wirkungslos, galt nicht für Dial-Geräte. Für Geräte ohne Drehring bleibt sie richtig: Dort entstehen keine Rotary-Eingänge mehr.
+- Betroffen war nur der Download der Loxone-Eingaben. Wer ihn mit 2.12.1 neu erzeugt hat, holt ihn mit 2.12.2 noch einmal. Der laufende Betrieb und bereits eingerichtete Eingänge in Loxone waren nicht betroffen.
+
+### 🧪 Tests
+- Abdeckung von 438 auf 444 Tests erweitert.
+
 ## [2.12.1] - 2026-10-02
 **Umbenennungen aus der Hue-App kommen an** – Wer eine Lampe, eine Gruppe oder einen Sensor in der Hue-App umbenannte, sah in der Zuordnung weiter den alten Namen, ebenso im Backup und als Kommentar im XML-Export für Loxone. Der Name wird jetzt aus der Bridge nachgezogen.
 
