@@ -6,6 +6,26 @@ Das Format basiert auf [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 und dieses Projekt hält sich an [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 [![Buy Me A Coffee](https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png)](https://www.buymeacoffee.com/bausi2k)
 
+## [2.13.0] - 2026-10-03
+**Nicht erreichbare Lampen erkennen** – Eine Lampe, die per Zigbee nicht erreichbar ist, stand bisher weiter auf „an". Die Bridge meldet für sie den Sollzustand, und Befehle an sie galten als ausgeführt. Jetzt gibt es einen eigenen Statuswert `reachable`, und abgelehnte Befehle werden erkannt.
+
+### ✨ Neu
+- **Statuswert `reachable` (1/0) für Lampen.** Er wird beim Start und live aus der Zigbee-Verbindung der Bridge geladen und geht per UDP (`hue.<name>.reachable`, bei aktivem Loxone Sync) und MQTT hinaus. In Loxone legst du dafür einen virtuellen UDP-Eingang mit der Befehlserkennung `hue.<name>.reachable \v` an; der XML-Export enthält ihn nicht.
+- **Zustand nach der Rückkehr.** Kommt eine Lampe wieder, lädt die Bridge ihren Zustand neu, denn eine Bedienung am Wandschalter in der Zwischenzeit wird nicht als Ereignis gemeldet.
+- **Anzeige:** Das Dashboard zeigt „NICHT ERREICHBAR", die Diagnose nennt es in der Geräteliste, und der Detaildialog hat die Zeile „Erreichbarkeit".
+- **Spalte „Nicht ausgeführt"** in der Zuverlässigkeit der Befehle, im Detaildialog mit dem letzten Fehler der Bridge.
+
+### 🐛 Behoben
+- **Befehle, die die Bridge ablehnt, galten als ausgeführt (#67).** Die Bridge antwortet mit HTTP 200 oder 207 und einer Fehlerliste, etwa „communication issues". Bei einer Lampe wird der Sollzustand jetzt nicht mehr gesetzt, es wird nicht wiederholt, und das Log enthält eine Warnung mit dem Text der Bridge. Bei einer Gruppe bleibt der Zustand gesetzt, weil die übrigen Lampen den Befehl ausgeführt haben; die Warnung erscheint trotzdem.
+
+### 📐 Hinweise
+- **`on` bleibt unverändert.** Eine nicht erreichbare Lampe steht weiter auf dem Sollzustand der Bridge. Filtere in Loxone auf `reachable`.
+- Nur Lampen bekommen `reachable`, keine Gruppen, Sensoren oder Taster.
+- Ob die Bridge einen verpassten Befehl nach der Rückkehr selbst nachholt, ist ungeprüft. Du kannst in Loxone die steigende Flanke von `reachable` nutzen, um den Sollzustand erneut zu senden.
+
+### 🧪 Tests
+- Abdeckung von 444 auf 463 Tests erweitert.
+
 ## [2.12.2] - 2026-10-03
 **Drehring-Eingänge für Dial-Geräte wieder im Export** – Korrektur zu 2.12.1. Dort fehlten im Loxone-Export bei Zuordnungen, die an einer Taste eines Hue Tap Dial hängen, die Eingänge für die Drehrichtung.
 
