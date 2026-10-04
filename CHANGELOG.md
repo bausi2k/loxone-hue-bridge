@@ -6,6 +6,23 @@ Das Format basiert auf [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 und dieses Projekt hält sich an [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 [![Buy Me A Coffee](https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png)](https://www.buymeacoffee.com/bausi2k)
 
+## [2.14.0] - 2026-10-04
+**Nicht erreichbare Lampen melden keine Zustandswerte mehr** – Die Bridge liefert für eine nicht erreichbare Lampe weiter den Sollzustand. Bisher lief er nach Loxone und MQTT, Loxone sah „an", obwohl die Lampe dunkel war. Jetzt bleibt er zurück, bis die Lampe wieder erreichbar ist.
+
+### ✨ Neu
+- **Bei `reachable = 0` gehen `on`, `bri`, `mirek` und `hex` der Lampe weder per UDP noch per MQTT hinaus.** Loxone behält den letzten bekannten Wert, `reachable` zeigt, dass er nicht belastbar ist. Das gilt für Ereignisse, den Start und das Echo eines angenommenen Befehls. Sensoren, Taster und Gruppen sind nicht betroffen.
+- **`reachable` geht jetzt auch ohne Loxone Sync per UDP an Loxone.** Es ist eine Statusmeldung und kein Rückkanal des Schaltzustands.
+- **`reachable` wird beim Start erneut gesendet,** auch wenn sich der Wert nicht geändert hat, und zwar vor den Lampenzuständen. Nach einem Neustart von Loxone kennt es den Wert damit sofort.
+
+### 📐 Hinweise
+- **Verhaltensänderung gegenüber 2.13.0:** Dort liefen die Zustandswerte weiter. Wer in Loxone ohnehin auf `reachable` filtert, merkt nichts.
+- **Ausgeschaltet am Wandschalter:** Die Lampe geht von selbst auf `reachable = 0`. Loxone sieht dann kein „on 0", sondern `reachable 0` und den alten Wert. `on` springt bewusst nicht auf 0.
+- Kommt eine Lampe zurück, geht erst `reachable 1` hinaus, danach der frisch geladene Zustand.
+- Gruppen haben weiterhin kein `reachable`.
+
+### 🧪 Tests
+- Abdeckung von 463 auf 474 Tests erweitert.
+
 ## [2.13.0] - 2026-10-03
 **Nicht erreichbare Lampen erkennen** – Eine Lampe, die per Zigbee nicht erreichbar ist, stand bisher weiter auf „an". Die Bridge meldet für sie den Sollzustand, und Befehle an sie galten als ausgeführt. Jetzt gibt es einen eigenen Statuswert `reachable`, und abgelehnte Befehle werden erkannt.
 
