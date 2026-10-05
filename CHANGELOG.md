@@ -6,6 +6,20 @@ Das Format basiert auf [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 und dieses Projekt hält sich an [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 [![Buy Me A Coffee](https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png)](https://www.buymeacoffee.com/bausi2k)
 
+## [2.15.0] - 2026-10-05
+**Diagnose mit Hersteller und sortierter Netzwerkliste** – Die Netzwerkliste ist nach Gruppe und Name sortiert, und Netzwerk wie Zuverlässigkeit nennen Hersteller und Modell der Geräte.
+
+### ✨ Neu
+- **Diagnose › Netzwerk: Sortierung nach Gruppe, dann nach Name.** Die Gruppen sind 💡 Licht, 📡 Sensor, 🔘 Schalter und 🔧 Sonstige (etwa die Bridge selbst), jeweils mit der Anzahl. Ein Gerät mit `connectivity_issue` lässt sich so schneller finden.
+- **Spalte „Hersteller / Modell"** in Diagnose › Netzwerk und in Diagnose › Zuverlässigkeit, etwa „GLEDOPTO, GL-C-008P". Damit lässt sich eine Häufung von Widersprüchen einem Fabrikat zuordnen. Meldet die Bridge keine Herstellerdaten, steht ein Strich.
+
+### 📐 Hinweise
+- Reine Anzeige: Zuordnung, Status, UDP/MQTT und die Zählung der Zuverlässigkeit bleiben unverändert.
+- „Gruppe" bedeutet hier den Gerätetyp, nicht den Hue-Raum.
+
+### 🧪 Tests
+- Abdeckung von 474 auf 485 Tests erweitert.
+
 ## [2.14.0] - 2026-10-04
 **Nicht erreichbare Lampen melden keine Zustandswerte mehr** – Die Bridge liefert für eine nicht erreichbare Lampe weiter den Sollzustand. Bisher lief er nach Loxone und MQTT, Loxone sah „an", obwohl die Lampe dunkel war. Jetzt bleibt er zurück, bis die Lampe wieder erreichbar ist.
 
