@@ -6,6 +6,35 @@ Das Format basiert auf [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 und dieses Projekt hält sich an [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 [![Buy Me A Coffee](https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png)](https://www.buymeacoffee.com/bausi2k)
 
+## [2.16.0] - 2026-10-19
+**Schnellere Szenen, Gruppen als Kugeln und eine Oberfläche nach Apple HIG** – Lichtbefehle laufen parallel, Gruppen brauchen nur noch 300 ms Abstand, und das Portal ist auf dem iPhone ruhiger und besser bedienbar.
+
+### ✨ Neu
+- **Bis zu drei Lichtbefehle gleichzeitig unterwegs.** Bisher wartete jeder Befehl auf die Antwort des vorigen. Jetzt laufen drei parallel; je Lampe bleibt es bei einem Befehl zur Zeit, die Reihenfolge bleibt erhalten. Die **Drosselung** in den Einstellungen gilt für Lichter jetzt als Abstand zwischen zwei Starts.
+- **Gruppenbefehle mit 300 ms statt 1000 ms Mindestabstand.** Gemessen: 12 Gruppenbefehle im Abstand von 100 ms kamen ohne „Too Many Requests" (429) durch. Die zweite Gruppe einer Szene wartet damit etwa 0,35 s statt 1,03 s.
+- **Die Lampen einer Gruppe als Kugeln in der Lichter-Liste.** Unter dem Namen jeder Gruppe (Raum oder Zone) steht eine Kugel je Lampe: an in der Farbe der Lampe, aus als leerer Ring, nicht erreichbar gestrichelt. Der Name steht als Tooltip daran, VoiceOver bekommt eine Zusammenfassung. Das kostet keine zusätzlichen Abfragen, der Zustand stammt aus den Ereignissen der Bridge.
+- **Sofortiges Nachsteuern der Helligkeit** für Zuordnungen mit „Zustand nachlesen". Manche Lampen (etwa Paulmann 500.48) melden 10 bis 35 Sekunden nach dem Befehl eine falsche Helligkeit (zum Beispiel 0,4 % statt 100 %). Jetzt wird bei dieser Meldung sofort nur die Helligkeit nachgesendet, höchstens zweimal je Befehl und nicht bei nicht erreichbaren Lampen. Im Betrieb war die Lampe nach einer Sekunde wieder auf Sollwert.
+- **Kopfzeile bleibt beim Scrollen oben stehen** (auf dem Handy 77 statt 127 Pixel hoch). Die Anzahl in den Gruppenköpfen der Diagnose ist eine Bubble.
+- **Oberfläche nach den Apple Human Interface Guidelines:**
+    - Tippflächen von mindestens 44 × 44 Punkten (Löschen-Knopf, Burger, Farbschema-Umschalter, Untertabs, Eingabefelder, Kontrollkästchen).
+    - Bedienung per Tastatur und VoiceOver: Reiter, Karten und Chips sind echte Knöpfe mit Fokusring, Dialoge verwalten den Fokus und schließen mit Escape, alle Formularfelder haben eine verbundene Beschriftung.
+    - Safe Area auf iPhones mit Notch, besserer Kontrast im Hellmodus (mindestens 4,5:1), „Bewegung reduzieren" wird beachtet.
+
+### 🐛 Behoben
+- **`reachable` fehlte nach jedem Start** (seit 2.13.0). Der Initial-Sync fragte acht Ressourcen gleichzeitig ab, und die Bridge lehnte die letzte mit 429 ab. Jetzt gehen höchstens vier Abfragen gleichzeitig hinaus, eine mit 429 abgelehnte wird einmal wiederholt.
+- **Befehle an Lampen ohne Dimmen galten als nicht ausgeführt.** Ein Stecker führt „ein" aus, lehnt die Helligkeit aber ab; das erschien als Warnung und Fehler in der Zuverlässigkeit. Helligkeit, Farbe und Farbtemperatur entfallen jetzt, wenn die Lampe sie nicht hat. Echte Fehler wie „communication issues" werden weiter gemeldet.
+- **Die Liste sprang auf dem iPhone beim Scrollen nach oben.** Sie wurde alle zwei Sekunden verworfen und neu aufgebaut. Jetzt wird nur bei geänderten Daten gezeichnet, mit erhaltener Scrollposition.
+- Abhängigkeit `proxy-addr` auf 2.0.8 aktualisiert.
+
+### 📐 Hinweise
+- Meldet die Bridge im Dauerbetrieb „HUE RATE LIMIT (429)", bitte melden; dann wird der Abstand angehoben.
+- Auf dem iPhone brauchst Du nach dem Update einen harten Reload, sonst bleibt der alte Stand im Cache.
+- Beim Start fragt die Bridge zusätzlich Räume und Zonen ab.
+- Der Image-Tag `beta` dient als interner Kanal: Tags mit Bindestrich (z. B. `v2.16.0-beta.1`) werden nur als `beta` veröffentlicht, ohne `latest` und ohne öffentliches Release.
+
+### 🧪 Tests
+- Abdeckung von 438 auf 633 Tests erweitert.
+
 ## [2.15.0] - 2026-10-05
 **Diagnose mit Hersteller und sortierter Netzwerkliste** – Die Netzwerkliste ist nach Gruppe und Name sortiert, und Netzwerk wie Zuverlässigkeit nennen Hersteller und Modell der Geräte.
 
