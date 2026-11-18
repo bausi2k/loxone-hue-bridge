@@ -6,6 +6,32 @@ Das Format basiert auf [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 und dieses Projekt hält sich an [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 [![Buy Me A Coffee](https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png)](https://www.buymeacoffee.com/bausi2k)
 
+## [2.17.0] - 2026-11-18
+**Neue Geräte melden, Befehlsschwälle und neues Erscheinungsbild** – Die Bridge erkennt unbekannte Gerätemodelle und hilft, sie zu dokumentieren. Dazu zwei Korrekturen aus dem Betriebslog und das Designsystem CGDESIGN v1.3.1. Enthält alle Änderungen der Vorabversionen 2.16.1-beta.1 bis 2.17.0-beta.1.
+
+### ✨ Neu
+- **Erkennung unbekannter Modelle.** Die Bridge führt einen Katalog bekannter Modelle (Hersteller und Modell). Taucht beim Start oder bei der Abfrage der Geräteliste ein anderes auf, wird es **einmal** gemeldet: eine Zeile im Log und ein Hinweis oben in der Diagnose („Neue Geräte erkannt: …"). Danach bleibt es still in der Liste, bei jedem weiteren Start kommt nichts mehr. Die Hue Bridge selbst zählt nicht.
+- **Diagnose › Neue Geräte.** Die Liste zeigt jedes unbekannte Modell mit Anzahl und Status („noch nicht gemeldet", „gemeldet", „nicht melden"). Ein Zähler am Reiter nennt die offenen.
+- **Bericht zum Gerät, auf Klick.** Er beschreibt das Modell: Hersteller, Modell, Firmware, Archetyp, die Dienste (etwa drei Lichter oder ein Licht mit Gradient, Entertainment-Segmente) und die Fähigkeiten (Farbe, Weißton-Bereich, Effekte). **Nicht enthalten** sind die von dir vergebenen Namen, UUIDs, MAC-Adressen, die IP der Bridge und aktuelle Zustandswerte. Die Vorschau zeigt vor dem Senden genau, was drinsteht.
+- **Drei Wege ohne Zwang.** „GitHub-Issue vorbereiten" öffnet ein vorausgefülltes Issue im öffentlichen Repo, „Kopieren" und „Als Datei" funktionieren ohne GitHub-Konto, etwa um den Bericht in einem Forum zu posten. **Die Bridge sendet nichts von selbst.**
+- **Abschaltbar.** Unter System › Einstellungen schaltet „Hinweis auf neue Geräte" die Meldung im Log und in der Diagnose ab. Die Liste bleibt trotzdem erreichbar.
+- **Neues Erscheinungsbild nach CGDESIGN v1.3.1.** Magenta als Akzentfarbe (Farbton 304, Sättigung 56 %), rundere Ecken (16, 12 und 8 Pixel), dezente Rahmen an Karten und Tabellen, kräftigere Rahmen an Eingabefeldern (mindestens 3:1), eigene Statusfarben für Hell und Dunkel und eine einfarbige Überschrift. Knöpfe und Text erreichen mindestens 4,5:1.
+
+### 🐛 Behoben
+- **Wartende Befehle galten nach 15 Sekunden als „verwaiste Befehlssperre".** Schickte Loxone einen Schwall von Befehlen (am 26.10. etwa 20 pro Sekunde über mehrere Minuten), standen Befehle bis zu 12 Sekunden in der Warteschlange. Die Frist zählte ab dem Einreihen, gab die Sperre der Lampe frei und **verwarf dabei den neuesten wartenden Wert** (103 Mal im Log). Jetzt hält ein Befehl in der Warteschlange die Sperre, und die Frist zählt ab dem Start. Eine Sperre, deren Befehl aus der Warteschlange verdrängt wurde (Obergrenze 100), verfällt weiterhin.
+- **RGB-Befehle an Gruppen ohne Farblampe wurden von der Bridge abgelehnt** („Color feature not supported by grouped light resource", 29 Mal im Log). Bei Gruppen leitet die Bridge die Fähigkeiten jetzt aus den Lampen der Gruppe ab: Enthält sie keine Farblampe, geht ein Weißton im Bereich hinaus, den alle Lampen der Gruppe können. Gruppen mit mindestens einer Farblampe senden weiter die Farbe.
+- Zwei ungültige Farbangaben in der Oberfläche wirkten nie: der Hover-Schatten des Speichern-Knopfs und der Hintergrund einer aktiven Option in „Zustand nachlesen".
+
+### 📐 Hinweise
+- Der Katalog enthält zunächst die Modelle der Entwickler-Anlage (24). Auf einer anderen Anlage erscheinen deshalb beim ersten Start vermutlich mehrere Modelle als unbekannt, in **einer** Meldung. Ein Bericht hilft, den Katalog zu erweitern.
+- Das Issue nutzt die Vorlage `neues-geraet.yml` im öffentlichen Repo. Ist der Bericht zu lang für den Link, kommt er in die Zwischenablage.
+- Der Zustand je Modell steht in der `config.json` (`neueGeraete`) und ist Teil des Backups.
+- Auf dem iPhone brauchst Du nach dem Update einen harten Reload.
+- Weiße Schrift auf dem roten Löschen-Knopf hat im Dunkelmodus knapp 3,6:1.
+
+### 🧪 Tests
+- Abdeckung von 633 auf 714 Tests erweitert.
+
 ## [2.16.0] - 2026-10-19
 **Schnellere Szenen, Gruppen als Kugeln und eine Oberfläche nach Apple HIG** – Lichtbefehle laufen parallel, Gruppen brauchen nur noch 300 ms Abstand, und das Portal ist auf dem iPhone ruhiger und besser bedienbar.
 
