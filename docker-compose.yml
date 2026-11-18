@@ -16,10 +16,12 @@ services:
       # Nur noch der Data-Ordner ist wichtig
       - ./data:/app/data
 
-    # Begrenzt die Docker-Logdatei. Ohne diese Angabe wächst sie im
-    # Dauerbetrieb unbegrenzt - unabhängig von der Rotation der logs.db.
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "10m"
-        max-file: "3"
+    # Optional: Begrenzt die Docker-Logdatei auf Linux-Servern und Raspberry Pi,
+    # sonst wächst sie im Dauerbetrieb unbegrenzt - unabhängig von der Rotation
+    # der logs.db. NICHT auf einer Synology verwenden: Mit dem Treiber
+    # "json-file" zeigt der Container Manager keine Logs mehr an.
+    # logging:
+    #   driver: "json-file"
+    #   options:
+    #     max-size: "10m"
+    #     max-file: "3"

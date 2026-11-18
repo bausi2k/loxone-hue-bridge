@@ -64,12 +64,14 @@ Du musst keinen Code mehr bauen. Du brauchst nur Docker und eine `docker-compose
           - TZ=Europe/Vienna
         volumes:
           - ./data:/app/data
-        # Begrenzt die Docker-Logdatei, sonst wächst sie im Dauerbetrieb unbegrenzt
-        logging:
-          driver: "json-file"
-          options:
-            max-size: "10m"
-            max-file: "3"
+        # Optional (Linux, Raspberry Pi): Begrenzt die Docker-Logdatei, sonst wächst sie
+        # im Dauerbetrieb unbegrenzt. NICHT auf einer Synology: Der Container Manager
+        # zeigt mit "json-file" keine Logs mehr an.
+        # logging:
+        #   driver: "json-file"
+        #   options:
+        #     max-size: "10m"
+        #     max-file: "3"
     ```
 
 3.  **Starten:**
