@@ -81,6 +81,13 @@ Du musst keinen Code mehr bauen. Du brauchst nur Docker und eine `docker-compose
 4.  **Setup:**
     Öffne `http://<DEINE-IP>:8555` für den Einrichtungsassistenten.
 
+> **⚠️ Immer nur eine Instanz betreiben.** Läuft die Bridge auf zwei Geräten (z. B. NAS und Raspberry Pi) oder in zwei Containern, senden beide an Hue und Loxone. Loxone bekommt jede Meldung doppelt: Taster schalten zweimal (die Lampe geht an und gleich wieder aus oder reagiert gar nicht), Befehle laufen doppelt.
+> Das passiert leicht nach einem Umzug: Mit `restart: always` (oder `unless-stopped`) startet der alte Container nach jedem Neustart des Geräts von selbst wieder. Beim Umziehen den alten Container deshalb nicht nur stoppen, sondern die Neustart-Regel abschalten oder den Container entfernen:
+> ```bash
+> docker update --restart=no loxhuebridge && docker stop loxhuebridge
+> ```
+> Für den Notfall bleibt er so erhalten und lässt sich mit `docker start loxhuebridge` wieder starten.
+
 ---
 
 ## 🛠 Manuelle Installation (Experten)
