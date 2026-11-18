@@ -1,0 +1,28 @@
+name: Neues Gerät melden
+description: Bericht zu einem Gerätemodell, das die loxHueBridge noch nicht kennt
+title: "Neues Gerät: "
+labels: ["neues-geraet"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Danke für deine Hilfe! Den Bericht erzeugt die Bridge unter **Diagnose › Neue Geräte › Bericht erstellen**.
+        Er enthält nur Angaben zum Modell. Namen, UUIDs, MAC-Adressen und die IP deiner Bridge sind nicht enthalten, bitte prüfe das trotzdem kurz, bevor du abschickst.
+  - type: textarea
+    id: bericht
+    attributes:
+      label: Bericht
+      description: Füge hier den Inhalt aus dem Berichtsdialog ein (falls er nicht schon ausgefüllt ist).
+      render: json
+    validations:
+      required: true
+  - type: textarea
+    id: verhalten
+    attributes:
+      label: Wie verhält sich das Gerät? (optional)
+      description: Zum Beispiel, ob mehrere Lichter einzeln in der Hue-App steuerbar sind, oder ob Farbe und Weißton funktionieren.
+  - type: input
+    id: bridge
+    attributes:
+      label: Hue Bridge (optional)
+      description: Version der Bridge, zum Beispiel v2 (rund) oder v3 (Pro).
