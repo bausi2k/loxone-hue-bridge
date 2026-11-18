@@ -6,6 +6,25 @@ Das Format basiert auf [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 und dieses Projekt hält sich an [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 [![Buy Me A Coffee](https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png)](https://www.buymeacoffee.com/bausi2k)
 
+## [2.19.0] - 2026-11-18
+**Neue Version an Loxone melden** – Die Bridge gibt den Hinweis auf eine neue Version auch an Loxone und MQTT weiter, etwa für eine Push-Meldung.
+
+### ✨ Neu
+- **Meldung an Loxone.** Nach jeder Versionsprüfung (einmal täglich, nach „Jetzt prüfen" und 60 Sekunden nach dem Start) schickt die Bridge drei Zeilen per UDP, im selben Format wie die Sensoren:
+  - `hue.loxhuebridge.update 1` (`0`, wenn keine neuere Version da ist)
+  - `hue.loxhuebridge.version 2.19.1` (`0`, wenn aktuell)
+  - `hue.loxhuebridge.versionnr 21901` (dieselbe Version als Zahl: Hauptversion × 10000 + Nebenversion × 100 + Patch)
+- **Dieselben Werte per MQTT** unter `<Präfix>/system/update`, `system/version` und `system/versionnr`.
+- **Eigene Eingänge in Loxone.** Ein virtueller UDP-Eingang mit der Befehlserkennung `hue.loxhuebridge.update \v` liefert 0 oder 1, `hue.loxhuebridge.versionnr \v` die Versionsnummer als Zahl. Die Einrichtung steht im Wiki.
+
+### 📐 Hinweise
+- Es hängt am bestehenden Schalter „Hinweis auf neue Versionen". Ist er aus, geht nichts hinaus. Auch bei einem Fehler der Abfrage wird nichts gesendet.
+- Die Bridge meldet bei **jeder** Prüfung, nicht nur bei einer Änderung. UDP hat keine Rückmeldung, so kommt der Wert nach einem Neustart des Miniservers spätestens am nächsten Tag zurück. Ohne neue Version gehen Nullen hinaus, damit Loxone einen früheren Hinweis zurücknimmt.
+- Die XML-Vorlagen im Smart Import bleiben unverändert, die zwei Eingänge legst Du von Hand an.
+
+### 🧪 Tests
+- Abdeckung von 757 auf 770 Tests erweitert.
+
 ## [2.18.0] - 2026-11-18
 **Hinweis auf neue Versionen** – Die Bridge sagt Bescheid, wenn eine neuere stabile Version erschienen ist.
 
