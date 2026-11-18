@@ -6,6 +6,23 @@ Das Format basiert auf [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 und dieses Projekt hält sich an [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 [![Buy Me A Coffee](https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png)](https://www.buymeacoffee.com/bausi2k)
 
+## [2.18.0] - 2026-11-18
+**Hinweis auf neue Versionen** – Die Bridge sagt Bescheid, wenn eine neuere stabile Version erschienen ist.
+
+### ✨ Neu
+- **Hinweis im Portal.** Gibt es eine neuere stabile Version, steht oben auf jeder Seite „Neue Version X verfügbar (installiert: Y)" mit Link zu den Änderungen und dem Befehl zum Aktualisieren. „Schließen" blendet den Hinweis für diese Version aus, eine noch neuere erscheint wieder.
+- **Eine Logzeile je Version.** Die Bridge schreibt die Meldung genau einmal ins Log, auch nach Neustarts.
+- **Einmal täglich, kurz nach dem Start.** Die Bridge fragt bei GitHub nach der neuesten stabilen Version. Vorabversionen zählen nicht, wer eine Beta fährt, bekommt die stabile Version angezeigt.
+- **Abschaltbar, mit „Jetzt prüfen".** Unter System › Einstellungen schaltet „Hinweis auf neue Versionen" die Abfrage ab, dann geht gar nichts hinaus. „Jetzt prüfen" fragt sofort nach.
+
+### 📐 Hinweise
+- **Die Bridge aktualisiert sich nie selbst.** Eingespielt wird das Update wie bisher mit `docker compose pull && docker compose up -d`. Wer das automatisieren will, nimmt dafür einen Dienst außerhalb der Bridge, siehe Wiki.
+- Die Abfrage ist ein anonymes GET an `api.github.com` ohne Daten der Anlage. Ist GitHub nicht erreichbar, bleibt es still (nur im Debug-Log).
+- Der Zustand steht in der `config.json` (`updateHinweis`, `updateGemeldet`) und ist Teil des Backups.
+
+### 🧪 Tests
+- Abdeckung von 714 auf 757 Tests erweitert.
+
 ## [2.17.0] - 2026-11-18
 **Neue Geräte melden, Befehlsschwälle und neues Erscheinungsbild** – Die Bridge erkennt unbekannte Gerätemodelle und hilft, sie zu dokumentieren. Dazu zwei Korrekturen aus dem Betriebslog und das Designsystem CGDESIGN v1.3.1. Enthält alle Änderungen der Vorabversionen 2.16.1-beta.1 bis 2.17.0-beta.1.
 

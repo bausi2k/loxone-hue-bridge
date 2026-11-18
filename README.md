@@ -6,7 +6,7 @@
 
 Sie ermöglicht eine extrem schnelle, lokale Steuerung ohne Cloud-Verzögerung und nutzt die moderne Hue Event-Schnittstelle (SSE), um Statusänderungen in Echtzeit an Loxone (UDP) und MQTT Broker zurückzumelden.
 
-## 🚀 Features V2.17.0
+## 🚀 Features V2.18.0
 
 * **Nativer „Alles" Befehl:** Nutzt die Hue `bridge_home` API für blitzschnelles Ausschalten des gesamten Hauses.
 * **Hue Effekte & Alert:** Steuere Lampen mit atmosphärischen Effekten direkt aus Loxone:
@@ -21,7 +21,8 @@ Sie ermöglicht eine extrem schnelle, lokale Steuerung ohne Cloud-Verzögerung u
 * **Smart Mapping:** Einfache Zuordnung per „Klick & Wähl" mit automatischer Duplikatsfilterung bei erkannten Befehlen.
 * **Erweiterter Diagnose-Tab:** Zeigt Gerätestatus nach Typ gruppiert, Zigbee-Konnektivität pro Gerät und eine vollständige Übersicht aller Lampen-Fähigkeiten (Dimmen, Farbe, Weißton, unterstützte Effekte). Ein Klick auf ein Gerät zeigt alle Informationen: Weißton-Bereich, Hersteller und Modell, Zigbee, Batterie, alle Dienste der Bridge und die Rohdaten.
 * **Neue Geräte melden:** Unbekannte Gerätemodelle werden einmal gemeldet und lassen sich als anonymisierter Bericht kopieren, speichern oder als GitHub-Issue vorbereiten. Nichts wird automatisch gesendet, die Meldung ist abschaltbar.
-* **Automatisierte Tests:** Test-Infrastruktur auf Basis des nativen Node.js Test-Runners mit 714 Tests.
+* **Hinweis auf neue Versionen:** Die Bridge prüft einmal täglich, ob eine neuere stabile Version erschienen ist, und zeigt das im Portal und im Log an. Sie aktualisiert sich nie selbst, die Prüfung ist abschaltbar.
+* **Automatisierte Tests:** Test-Infrastruktur auf Basis des nativen Node.js Test-Runners mit 757 Tests.
 * **Persistent Logging (SQLite):** Dank nativer SQLite-Datenbank bleiben Logs auch nach Neustarts erhalten und sind extrem performant durchsuchbar (Volltextsuche & Filter). Automatische Rotation bei 50.000 Einträgen hält die Datenbank klein.
 * **Backup & Restore:** Lade deine komplette Konfiguration inkl. Mappings als Backup herunter und stelle sie bei Bedarf wieder her.
 * **Loxone Integration:**
